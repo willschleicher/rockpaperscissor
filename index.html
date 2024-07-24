@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rock Paper Scissors Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f0f0f0;
+    }
+    #game-container {
+      text-align: center;
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      width: 80%;
+      max-width: 350px;
+    }
+    #score-container {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .score {
+      font-size: 24px;
+      font-weight: bold;
+    }
+    #computer-score {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+    }
+    #computer-tally {
+      margin-right: 5px;
+    }
+    button {
+      margin: 5px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    #message-display {
+      margin-top: 20px;
+      font-size: 18px;
+    }
+    #replay-link {
+      display: none;
+      margin-top: 20px;
+      color: blue;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+<div id="game-container">
+  <h1>Rock Paper Scissors</h1>
+  <div id="score-container">
+    <div class="score" id="player-score">Player: </div>
+    <div class="score" id="computer-score">
+      <span id="computer-tally"></span>
+      <span>:Computer</span>
+    </div>
+  </div>
+  <div id="buttons">
+    <button onclick="playGame('ROCK')">Rock</button>
+    <button onclick="playGame('PAPER')">Paper</button>
+    <button onclick="playGame('SCISSORS')">Scissors</button>
+  </div>
+  <div id="message-display"></div>
+  <div id="replay-link" onclick="replayGame()">Play Again? 👀</div>
+</div>
+
+<script>
+  let playerScore = 0;
+  let computerScore = 0;
+  let messageDisplay = document.getElementById('message-display');
+  let replayLink = document.getElementById('replay-link');
+  let playerScoreDisplay = document.getElementById('player-score');
+  let computerTallyDisplay = document.getElementById('computer-tally');
+
+  function displayMessage(message) {
+    messageDisplay.innerHTML += `<p>${message}</p>`;
+  }
+
+  function updateScores() {
+    playerScoreDisplay.textContent = `Player: ${'|'.repeat(playerScore)}`;
+    computerTallyDisplay.textContent = '|'.repeat(computerScore);
+  }
+
+  function playGame(playerSelection) {
+    if (playerScore < 3 && computerScore < 3) {
+      let computerSelection = computerPlay();
+      let result = playRound(playerSelection, computerSelection);
+      displayMessage(result);
+
+      if (result.includes("You Win")) {
+        playerScore++;
+      } else if (result.includes("You Lose")) {
+        computerScore++;
+      }
+
+      updateScores();
+
+      if (playerScore === 3 || computerScore === 3) {
+        let winner = playerScore === 3 ? "YOU WIN!" : "YOU LOSE!";
+        displayMessage(`Game Over! ${winner}`);
+        replayLink.style.display = 'block';
+      }
+    }
+  }
+
+  function playRound(playerSelection, computerSelection) {
+    let play = playerSelection.toUpperCase();
+    let comp = computerSelection.toUpperCase();
+
+    if ((play == "ROCK" && comp == "SCISSORS") ||
+            (play == "PAPER" && comp == "ROCK") ||
+            (play == "SCISSORS" && comp == "PAPER")) {
+      return `${play} beats ${comp}: You Win!`;
+    }
+    if ((play == "SCISSORS" && comp == "ROCK") ||
+            (play == "ROCK" && comp == "PAPER") ||
+            (play == "PAPER" && comp == "SCISSORS")) {
+      return `${comp} beats ${play}: You Lose!`;
+    }
+    if (play == comp) {
+      return "Draw Game!";
+    }
+    return "ERROR: Outside edge case reached";
+  }
+
+  function computerPlay() {
+    let choices = ["ROCK", "PAPER", "SCISSORS"];
+    let randomIndex = Math.floor(Math.random() * choices.length);
+    return choices[randomIndex];
+  }
+
+  function replayGame() {
+    playerScore = 0;
+    computerScore = 0;
+    messageDisplay.innerHTML = '';
+    replayLink.style.display = 'none';
+    updateScores();
+    displayMessage("New Game! First to 3 wins.");
+  }
+
+  displayMessage("New Game! First to 3 wins.");
+  updateScores();
+</script>
+</body>
+</html>
